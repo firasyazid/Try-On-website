@@ -1,0 +1,145 @@
+.dialog {
+  width: min(960px, calc(100% - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: 0;
+  color: var(--color-text);
+  background: var(--color-page);
+  overscroll-behavior: contain;
+}
+
+.dialog::backdrop {
+  background: rgb(24 26 28 / 68%);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+}
+
+.preview {
+  position: relative;
+  min-height: clamp(390px, 54vh, 520px);
+  background: #e8e4dc;
+}
+
+.preview img {
+  object-fit: contain;
+  padding: clamp(16px, 4vw, 40px);
+}
+
+.preview[data-photo="true"] {
+  background: #ddd9d2;
+}
+
+.preview[data-photo="true"] img {
+  padding: 0;
+}
+
+.content {
+  align-self: center;
+  padding: clamp(28px, 5vw, 60px);
+}
+
+.close {
+  position: absolute;
+  inset-block-start: 12px;
+  inset-inline-end: 12px;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.close:hover,
+.pickPhoto:hover:not(:disabled) {
+  background: #e9e6e0;
+}
+
+.content h2 {
+  margin: 0;
+  font-size: clamp(2.4rem, 4.7vw, 3.5rem);
+  font-weight: 630;
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.garment {
+  margin-block-start: 14px;
+  font-weight: 640;
+}
+
+.instructions {
+  margin-block-start: 9px;
+  color: var(--color-muted);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-block-start: 22px;
+}
+
+.pickPhoto {
+  min-height: 48px;
+  padding: 8px 14px;
+  border: 0;
+  background: #eeebe5;
+  font-weight: 620;
+  cursor: pointer;
+}
+
+.primary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 50px;
+  padding: 8px 14px;
+  border: 0;
+  background: var(--color-accent);
+  color: #fff;
+  font-weight: 640;
+  cursor: pointer;
+}
+
+.primary:hover:not(:disabled) {
+  background: #263e51;
+}
+
+.actions button:disabled {
+  cursor: default;
+  opacity: 0.56;
+}
+
+.status:not(:empty) {
+  margin-block-start: 12px;
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+}
+
+.error {
+  color: #87392c;
+}
+
+@media (max-width: 640px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .preview {
+    min-height: clamp(160px, 32svh, 320px);
+  }
+
+  .content {
+    padding: 24px;
+  }
+
+  .close {
+    background: var(--color-page);
+  }
+}

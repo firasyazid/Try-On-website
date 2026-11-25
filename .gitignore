@@ -1,0 +1,12 @@
+/node_modules/
+/.next/
+/out/
+/.taste-skill/
+/.npm-cache/
+/.codex-verify/
+/next-env.d.ts
+*.tsbuildinfo
+*.log
+.env*
+!.env.example
+/inference/__pycache__/

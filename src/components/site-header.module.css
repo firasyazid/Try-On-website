@@ -1,0 +1,39 @@
+.header {
+  display: flex;
+  min-height: 72px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.wordmark {
+  font-size: 1.75rem;
+  font-weight: 720;
+  letter-spacing: -0.065em;
+  line-height: 1;
+}
+
+.navigation {
+  display: flex;
+  gap: clamp(14px, 2vw, 28px);
+}
+
+.collectionLink {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  font-weight: 560;
+  transition: color var(--rail-transition);
+}
+
+.collectionLink:hover, .collectionLink[aria-current="page"] {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 599px) {
+  .header {
+    min-height: 64px;
+  }
+}

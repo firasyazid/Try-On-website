@@ -1,0 +1,435 @@
+.hero {
+  margin-block-end: clamp(32px, 7vw, 96px);
+  scroll-margin-block-start: 16px;
+}
+
+.stage {
+  --slot-width: clamp(66px, 7vw, 96px);
+  --image-width: clamp(165px, 16vw, 230px);
+  --rail-thickness: clamp(8px, 0.78vw, 11px);
+  --hanger-drop: clamp(23px, 2.5vw, 32px);
+  --piece-height: calc(var(--image-width) * 1.37 + var(--hanger-drop) + 10px);
+  /* Keep the skylight and support beam in view on wide displays. */
+  --floor-clearance: max(clamp(30px, 2.9vw, 48px), calc(28vw - var(--piece-height)));
+  --headroom: calc((var(--piece-height) + var(--floor-clearance)) * 0.70);
+  --mount-height: calc(var(--headroom) * 0.85);
+  --spread: clamp(22px, 4vw, 58px);
+  --settle: 420ms cubic-bezier(0.24, 0.72, 0.28, 1);
+  --steel: #697276;
+  --steel-cylinder: linear-gradient(90deg, #6c787c, #a4afb1 23%, #e9eeee 43%, #b5bfc0 69%, #707d81);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #bbb3a7;
+}
+
+.stage[data-has-images="false"] {
+  --piece-height: clamp(194px, 22vw, 282px);
+}
+
+.showroom {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+}
+
+.showroom img {
+  object-fit: cover;
+  object-position: center;
+}
+
+.rail {
+  position: absolute;
+  z-index: -1;
+  inset: var(--mount-height) clamp(20px, 14vw, 180px) auto;
+  height: calc(var(--headroom) - var(--mount-height) + var(--rail-thickness) / 2);
+  pointer-events: none;
+}
+
+.railSupport {
+  position: absolute;
+  inset: 0 auto calc(var(--rail-thickness) - 2px) 7%;
+  width: clamp(5px, 0.48vw, 7px);
+  background: var(--steel-cylinder);
+  box-shadow: 1px 0 2px #24333918;
+}
+
+.railSupport:nth-child(2) {
+  inset-inline: auto 7%;
+}
+
+.railSupport::before, .railSupport::after {
+  position: absolute;
+  left: 50%;
+  background: var(--steel-cylinder);
+  transform: translateX(-50%);
+  content: "";
+}
+
+.railSupport::before {
+  top: 0;
+  width: calc(100% + 9px);
+  height: 7px;
+  border-radius: 0 0 2px 2px;
+  border-bottom: 1px solid #626f7480;
+}
+
+.railSupport::after {
+  bottom: 0;
+  width: calc(100% + 5px);
+  height: 7px;
+  border-radius: 2px 2px 0 0;
+  border-top: 1px solid #e7eeee;
+}
+
+.railBar {
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--rail-thickness);
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, #41515855, transparent 5% 95%, #39464e66),
+    linear-gradient(180deg, #77858a, #c8d0d1 15%, #f2f5f4 32%, #b8c4c5 43%, #7f8e93 66%, #555f66 87%, #38464b);
+  box-shadow: 0 1px 1px #26343c42, 0 3px 5px #26343c23;
+}
+
+.railBar::before, .railBar::after {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: clamp(5px, 0.52vw, 8px);
+  border-radius: 999px 2px 2px 999px;
+  border-right: 1px solid #45555b6b;
+  background: linear-gradient(180deg, #909da0, #e2e8e7 31%, #859497 60%, #4d5b61);
+  content: "";
+}
+
+.railBar::after {
+  inset-inline: auto 0;
+  transform: scaleX(-1);
+}
+
+.track {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  padding: var(--headroom) 0 var(--floor-clearance);
+  list-style: none;
+}
+
+.slot {
+  --shift: calc(var(--spread) * var(--direction));
+  --profile-width: calc(var(--image-width) * var(--garment-length) / var(--profile-length));
+  --hook-offset: calc(var(--image-width) * (var(--front-collar-center) - 0.5));
+  --rest-turn: calc(64deg + (var(--slot-index) - var(--rail-midpoint)) * 2deg);
+  --rest-lean: calc((var(--slot-index) - var(--rail-midpoint)) * 0.7deg);
+  position: relative;
+  flex: 0 0 var(--slot-width);
+  height: var(--piece-height);
+}
+
+.slot[data-profile="true"][data-active="false"] {
+  --hook-offset: calc(var(--profile-width) * (var(--profile-collar-center) - 0.5));
+}
+
+.garment {
+  position: absolute;
+  z-index: 1;
+  inset: 0 auto auto 50%;
+  width: var(--slot-width);
+  height: calc(var(--hanger-drop) + var(--image-width) * var(--garment-length));
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transform: translateX(calc(-50% + var(--shift)));
+  transition: transform var(--settle);
+}
+
+.garment:focus-visible {
+  outline-offset: -3px;
+  border-radius: 2px;
+}
+
+.slot[data-active="true"] .garment {
+  z-index: 3;
+  width: calc(var(--slot-width) * 1.2);
+  height: calc(var(--hanger-drop) + var(--image-width) * var(--garment-length) * 1.05);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .slot[data-active="true"] .garment {
+    width: calc(var(--image-width) * 0.8);
+  }
+}
+
+.piece {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--image-width);
+  height: var(--piece-height);
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.artwork {
+  position: absolute;
+  inset: 0;
+  transform-origin: top center;
+  transform: rotate(var(--rest-lean));
+  filter: drop-shadow(5px 7px 6px #332c2426);
+  transition: transform var(--settle);
+}
+
+.slot[data-active="true"] .artwork {
+  transform: rotate(-1deg) scale(1.045);
+}
+
+.hanger {
+  --yoke-depth: calc(var(--hanger-drop) + var(--image-width) * 0.12 + 8px);
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  width: 45%;
+  height: calc(var(--yoke-depth) + clamp(19px, 2.4vw, 34px));
+  transform: translateX(-50%);
+}
+
+.hangerHook {
+  position: absolute;
+  z-index: 1;
+  top: -1px;
+  left: calc(50% - 10px);
+  width: 12px;
+  height: 12px;
+  border: 2px solid #626f73;
+  border-top-color: #9da6a8;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+  border-radius: 50%;
+  transform: translateX(var(--hook-offset));
+  transition: transform var(--settle);
+}
+
+.hangerHook::after {
+  position: absolute;
+  top: 4px;
+  right: -1.5px;
+  width: 2px;
+  height: calc(var(--hanger-drop) + var(--image-width) * 0.15);
+  border-radius: 1px;
+  background: var(--steel-cylinder);
+  content: "";
+}
+
+.hangerYoke {
+  position: absolute;
+  inset: var(--yoke-depth) 0 0;
+  background:
+    repeating-linear-gradient(174deg, transparent 0 2px, #6057481a 2px 3px, transparent 3px 5px),
+    linear-gradient(180deg, #938674 2%, #c9bdab 32%, #b4a793 68%, #817463 100%);
+  clip-path: polygon(46% 4%, 50% 0, 54% 4%, 59% 17%, 75% 40%, 96% 73%, 100% 86%, 98% 98%, 95% 100%, 69% 62%, 57% 43%, 50% 37%, 43% 43%, 31% 62%, 5% 100%, 2% 98%, 0 86%, 4% 73%, 25% 40%, 41% 17%);
+  transform: scaleX(0.33);
+}
+
+.photo {
+  --photo-width: var(--image-width);
+  --collar-center: var(--front-collar-center);
+  --collar-top: var(--front-collar-top);
+  --collar-depth: var(--front-collar-depth);
+  position: absolute;
+  inset: calc(var(--hanger-drop) - var(--image-width) * var(--neckline-inset)) 0 0;
+  transform-origin: top center;
+  transition: transform var(--settle), opacity 240ms var(--ease-out);
+}
+
+.photo::before {
+  position: absolute;
+  z-index: 1;
+  top: calc(var(--photo-width) * (var(--collar-top) - var(--collar-depth) * 0.75));
+  left: calc(var(--collar-center) * 100%);
+  width: 1.5px;
+  height: calc(var(--photo-width) * var(--collar-depth) * 0.75 + 1px);
+  border-radius: 1px 1px 0 0;
+  background: linear-gradient(90deg, #5d6665, #afb9b7);
+  transform: translateX(-50%);
+  content: "";
+}
+
+.photo::after {
+  position: absolute;
+  z-index: 1;
+  top: calc(var(--photo-width) * var(--collar-top));
+  left: calc(var(--collar-center) * 100%);
+  width: clamp(4px, var(--photo-width) * 0.036, 10px);
+  height: calc(var(--photo-width) * var(--collar-depth));
+  background:
+    linear-gradient(180deg, transparent 60%, #342b2266),
+    linear-gradient(90deg, #786a59, #c7b79d 42%, #9c896e);
+  clip-path: polygon(27% 0, 73% 0, 83% 20%, 85% 52%, 100% 100%, 0 100%, 15% 52%, 17% 20%);
+  transform: translateX(-50%);
+  content: "";
+}
+
+.front {
+  transform: perspective(850px) rotateY(var(--rest-turn));
+}
+
+.profile {
+  --photo-width: var(--profile-width);
+  --collar-center: var(--profile-collar-center);
+  --collar-top: var(--profile-collar-top);
+  --collar-depth: var(--profile-collar-depth);
+  inset: calc(var(--hanger-drop) - var(--profile-width) * var(--profile-inset)) auto 0 calc((100% - var(--profile-width)) / 2);
+  width: var(--profile-width);
+  transform: perspective(850px) rotateY(0deg);
+}
+
+.slot[data-profile="true"][data-active="false"] .front,
+.slot[data-active="true"] .profile {
+  opacity: 0;
+}
+
+.slot[data-active="true"] .front {
+  transform: perspective(850px) rotateY(0deg);
+  transition-delay: 0s, 45ms;
+}
+
+.slot[data-active="true"] .profile {
+  transform: perspective(850px) rotateY(-23deg);
+}
+
+.cutout {
+  object-fit: contain;
+  object-position: center top;
+}
+
+.tagSwatch {
+  position: absolute;
+  inset: var(--hanger-drop) auto auto 50%;
+  width: min(68%, 124px);
+  height: clamp(112px, 12vw, 160px);
+  border-start-start-radius: 40% 14px;
+  border-start-end-radius: 40% 14px;
+  background: var(--swatch);
+  transform: translateX(-50%);
+}
+
+.caption {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 27%);
+  align-items: end;
+  gap: clamp(18px, 4vw, 64px);
+  padding-block-start: clamp(20px, 2.2vw, 34px);
+}
+
+.title {
+  font-size: clamp(3.25rem, 6.4vw, 6.25rem);
+  font-weight: 630;
+  letter-spacing: -0.06em;
+  line-height: 0.95;
+}
+
+.detail {
+  display: grid;
+  min-height: 3.5rem;
+  align-items: center;
+}
+
+.garmentDetail {
+  grid-area: 1 / 1;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(7px);
+  transition: opacity 160ms var(--ease-out), transform 200ms var(--ease-out), visibility 0s 200ms;
+}
+
+.garmentDetail[data-visible="true"] {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 115ms, 115ms, 0s;
+}
+
+.garmentName {
+  font-size: 1.15rem;
+  font-weight: 650;
+}
+
+.garmentColor {
+  color: var(--color-muted);
+}
+
+@keyframes details-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes rail-in {
+  from { opacity: 0.55; }
+}
+
+@keyframes hang-in {
+  from { opacity: 0.7; rotate: 3deg; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rail { animation: rail-in 380ms var(--ease-out) both; }
+
+  .artwork {
+    animation: hang-in 500ms var(--ease-out) both;
+    animation-delay: calc(var(--slot-index) * 45ms + 70ms);
+  }
+
+  .title {
+    animation: details-in 420ms 130ms var(--ease-out) both;
+  }
+}
+
+@media (max-width: 699px) {
+  .stage {
+    --slot-width: clamp(44px, 20vw - 20px, 86px);
+    --image-width: clamp(145px, 41vw, 193px);
+    --spread: clamp(15px, 4vw, 26px);
+    --mobile-padding: 16px;
+    --floor-clearance: clamp(29px, 8vw, 49px);
+    --headroom: calc((var(--piece-height) + var(--floor-clearance)) * 0.85);
+    --mount-height: calc(var(--headroom) * 0.9);
+    container-type: inline-size;
+  }
+
+  .stage[data-has-images="false"] {
+    --piece-height: 212px;
+  }
+
+  .rail {
+    inset-inline: clamp(9px, 2.6vw, 16px);
+  }
+
+  .track {
+    --edge-shift: max(0px, calc(var(--image-width) * 0.53 + 10px + var(--slot-width) * var(--rail-midpoint) - 50cqw));
+    justify-content: safe center;
+    overflow-x: auto;
+    padding-inline: var(--mobile-padding);
+    scrollbar-width: thin;
+    scrollbar-color: var(--steel) transparent;
+  }
+
+  .slot:first-child[data-active="true"] { --shift: var(--edge-shift); }
+  .slot:last-child[data-active="true"] { --shift: calc(-1 * var(--edge-shift)); }
+
+  .caption {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .detail {
+    align-items: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garment, .artwork, .hangerHook, .photo, .garmentDetail { transition: none; }
+}
